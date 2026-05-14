@@ -100,23 +100,3 @@ userRoute.put("/articles", verifyToken("USER"), async (req, res) => {
     });
   }
 });
-
-
-userRoute.post("/login", async (req, res, next) => {
-  try {
-    const { token, user } = await authenticate(req.body);
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
-
-    res.status(200).json({
-      message: "login success",
-      payload: user,
-    });
-  } catch (err) {
-    next(err);
-  }
-});
