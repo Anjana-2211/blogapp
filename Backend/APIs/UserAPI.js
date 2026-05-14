@@ -5,6 +5,7 @@ import { verifyToken } from "../middlewares/verifyToken.js";
 import { upload } from "../config/multer.js";
 import cloudinary from "../config/cloudinary.js";
 import { uploadToCloudinary } from "../config/cloudinaryUpload.js";
+import cookieParser from "cookie-parser";
 
 export const userRoute = exp.Router();
 
@@ -33,43 +34,89 @@ userRoute.post("/users", upload.single("profileImageUrl"), async (req, res, next
       payload: newUserObj,
     });
   } catch (err) {
-    // Step 3: rollback
-    if (cloudinaryResult?.public_id) {
-      await cloudinary.uploader.destroy(cloudinaryResult.public_id);
-    }
+  console.log(err);
 
-    next(err); // send to your error middleware
+  if (cloudinaryResult?.public_id) {
+    await cloudinary.uploader.destroy(cloudinaryResult.public_id);
   }
+
+  next(err);
+}
 });
 
 //Read all articles(protected route)
-userRoute.get("/articles", verifyToken("USER"), async (req, res) => {
-  //read articles of all authors which are active
-  const articles = await ArticleModel.find({ isArticleActive: true }).populate("comments.user","email firstName");
-  //send res
-  res.status(200).json({ message: "all articles", payload: articles });
-});
+userRoute.get(
+  "/articles",
+  verifyToken("USER", "AUTHOR"),
+  async (req, res) => {
+    const articles = await ArticleModel.find({
+      isArticleActive: true,
+    })
+      .populate("comments.user", "email firstName")
+      .populate("author", "firstName email");
+
+    res.status(200).json({
+      message: "all articles",
+      payload: articles,
+    });
+  }
+);
 
 //Add comment to an article(protected route)
 userRoute.put("/articles", verifyToken("USER"), async (req, res) => {
-  //get comment obj from req
-  const { user, articleId, comment } = req.body;
-  //check user(req.user)
-  console.log(req.user);
-  if (user !== req.user.userId) {
-    return res.status(403).json({ message: "Forbidden" });
-  }
-  //find artcleby id and update
-  let articleWithComment = await ArticleModel.findOneAndUpdate(
-    { _id: articleId, isArticleActive: true },
-    { $push: { comments: { user, comment } } },
-    { new: true, runValidators: true },
-  ).populate("comments.user","email firstName");
+  try {
+    // get data
+    const { articleId, comment } = req.body;
 
-  //if article not found
-  if (!articleWithComment) {
-    return res.status(404).json({ message: "Article not found" });
+    // logged in user
+    const user = req.user.userId;
+
+    // update article
+    let articleWithComment = await ArticleModel.findOneAndUpdate(
+      { _id: articleId, isArticleActive: true },
+      {
+        $push: {
+          comments: { user, comment },
+        },
+      },
+      { new: true, runValidators: true }
+    ).populate("comments.user", "email firstName");
+
+    // article not found
+    if (!articleWithComment) {
+      return res.status(404).json({
+        message: "Article not found",
+      });
+    }
+
+    // success response
+    res.status(200).json({
+      message: "comment added successfully",
+      payload: articleWithComment,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
   }
-  //send res
-  res.status(200).json({ message: "comment added successfully", payload: articleWithComment });
+});
+
+
+userRoute.post("/login", async (req, res, next) => {
+  try {
+    const { token, user } = await authenticate(req.body);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.status(200).json({
+      message: "login success",
+      payload: user,
+    });
+  } catch (err) {
+    next(err);
+  }
 });

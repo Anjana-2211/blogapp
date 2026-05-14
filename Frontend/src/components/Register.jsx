@@ -39,12 +39,14 @@ function Register() {
       formData.append(key, userObj[key]);
     });
     // add profilePic to Formdata object
-    formData.append("profileImageUrl", profileImageUrl[0]);
+    if (profileImageUrl?.[0]) {
+  formData.append("profileImageUrl", profileImageUrl[0]);
+}
     //add image to formData objecte
     try {
       if (role === "user") {
         //make API req to user-api
-        let resObj = await axios.post("http://localhost:4000/user-api/users", formData);
+        let resObj = await axios.post("https://blogapp-0y0w.onrender.com/user-api/users", formData);
         if (resObj.status === 201) {
           //navigate to login
           navigate("/login");
@@ -53,7 +55,7 @@ function Register() {
       if (role === "author") {
         //make API req to author-api
         //make API req to user-api
-        let resObj = await axios.post("http://localhost:4000/author-api/users", formData);
+        let resObj = await axios.post("https://blogapp-0y0w.onrender.com/author-api/users", formData);
         console.log("res obj is ", resObj);
         if (resObj.status === 201) {
           //navigate to login
@@ -62,8 +64,13 @@ function Register() {
       }
     } catch (err) {
       // console.log("err is ", err);
-      setError(err.response?.data?.error || "Registration failed");
-    } finally {
+console.log(err.response?.data || err);
+setError(
+  err.response?.data?.message ||
+  err.response?.data?.error ||
+  err.message ||
+  "Registration failed"
+);    } finally {
       setLoading(false);
     }
   };
@@ -89,8 +96,10 @@ function Register() {
         <h2 className={formTitle}>Create an Account</h2>
         {/* error message */}
         {error && <p className={errorClass}>{error}</p>}
-        <form onSubmit={handleSubmit(onUserRegister)}>
-          {/* Role Selection */}
+<form
+  onSubmit={handleSubmit(onUserRegister)}
+  encType="multipart/form-data"
+>          {/* Role Selection */}
           <div className="mb-5">
             <p className={labelClass}>Register as</p>
             <div className="flex gap-6 mt-1">

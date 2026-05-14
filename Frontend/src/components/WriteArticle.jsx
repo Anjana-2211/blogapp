@@ -32,10 +32,10 @@ function WriteArticle() {
     setLoading(true);
 
     //add authorId to articleObj
-    articleObj.author=currentUser._id;
+    articleObj.author = currentUser._id || currentUser.userId;
     try {
       await axios.post(
-        "http://localhost:4000/author-api/articles",
+        "https://blogapp-0y0w.onrender.com/author-api/articles",
         articleObj,
         { withCredentials: true }
       );
