@@ -39,7 +39,9 @@ function Register() {
       formData.append(key, userObj[key]);
     });
     // add profilePic to Formdata object
-    formData.append("profileImageUrl", profileImageUrl[0]);
+    if (profileImageUrl && profileImageUrl[0]) {
+  formData.append("profileImageUrl", profileImageUrl[0]);
+}
     //add image to formData objecte
     try {
       if (role === "user") {
@@ -62,7 +64,7 @@ function Register() {
       }
     } catch (err) {
       // console.log("err is ", err);
-      setError(err.response?.data?.error || "Registration failed");
+setError(err.response?.data?.message || err.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -89,8 +91,10 @@ function Register() {
         <h2 className={formTitle}>Create an Account</h2>
         {/* error message */}
         {error && <p className={errorClass}>{error}</p>}
-        <form onSubmit={handleSubmit(onUserRegister)}>
-          {/* Role Selection */}
+<form
+  onSubmit={handleSubmit(onUserRegister)}
+  encType="multipart/form-data"
+>          {/* Role Selection */}
           <div className="mb-5">
             <p className={labelClass}>Register as</p>
             <div className="flex gap-6 mt-1">

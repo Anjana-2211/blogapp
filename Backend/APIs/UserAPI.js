@@ -33,13 +33,14 @@ userRoute.post("/users", upload.single("profileImageUrl"), async (req, res, next
       payload: newUserObj,
     });
   } catch (err) {
-    // Step 3: rollback
-    if (cloudinaryResult?.public_id) {
-      await cloudinary.uploader.destroy(cloudinaryResult.public_id);
-    }
+  console.log(err);
 
-    next(err); // send to your error middleware
+  if (cloudinaryResult?.public_id) {
+    await cloudinary.uploader.destroy(cloudinaryResult.public_id);
   }
+
+  next(err);
+}
 });
 
 //Read all articles(protected route)
