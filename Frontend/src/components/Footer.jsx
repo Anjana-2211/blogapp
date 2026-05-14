@@ -4,7 +4,7 @@ function Footer() {
   return (
     <footer style={{ backgroundColor: '#f8f9fa', padding: '20px', textAlign: 'center', marginTop: 'auto' }}>
       <div>
-        <p>&copy; 2023 BlogApp. All rights reserved.</p>
+        <p>&copy; 2026 BlogApp. All rights reserved.</p>
         <p>Follow us on 
           <a href="#" style={{ margin: '0 10px' }}>Facebook</a> | 
           <a href="#" style={{ margin: '0 10px' }}>Twitter</a> | 
