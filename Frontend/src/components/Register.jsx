@@ -39,7 +39,7 @@ function Register() {
       formData.append(key, userObj[key]);
     });
     // add profilePic to Formdata object
-    if (profileImageUrl && profileImageUrl[0]) {
+    if (profileImageUrl?.[0]) {
   formData.append("profileImageUrl", profileImageUrl[0]);
 }
     //add image to formData objecte
@@ -64,8 +64,13 @@ function Register() {
       }
     } catch (err) {
       // console.log("err is ", err);
-setError(err.response?.data?.message || err.message || "Registration failed");
-    } finally {
+console.log(err.response?.data || err);
+setError(
+  err.response?.data?.message ||
+  err.response?.data?.error ||
+  err.message ||
+  "Registration failed"
+);    } finally {
       setLoading(false);
     }
   };
