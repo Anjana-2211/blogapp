@@ -5,6 +5,7 @@ import { verifyToken } from "../middlewares/verifyToken.js";
 import { upload } from "../config/multer.js";
 import cloudinary from "../config/cloudinary.js";
 import { uploadToCloudinary } from "../config/cloudinaryUpload.js";
+import cookieParser from "cookie-parser";
 
 export const userRoute = exp.Router();
 
@@ -97,5 +98,25 @@ userRoute.put("/articles", verifyToken("USER"), async (req, res) => {
     res.status(500).json({
       message: err.message,
     });
+  }
+});
+
+
+userRoute.post("/login", async (req, res, next) => {
+  try {
+    const { token, user } = await authenticate(req.body);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    res.status(200).json({
+      message: "login success",
+      payload: user,
+    });
+  } catch (err) {
+    next(err);
   }
 });
