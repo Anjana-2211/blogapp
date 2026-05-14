@@ -44,7 +44,7 @@ function Register() {
     try {
       if (role === "user") {
         //make API req to user-api
-        let resObj = await axios.post("https://blog-app-project1.vercel.app/user-api/users", formData);
+        let resObj = await axios.post("https://blogapp-0y0w.onrender.com/user-api/users", formData);
         if (resObj.status === 201) {
           //navigate to login
           navigate("/login");
