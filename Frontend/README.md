@@ -53,20 +53,21 @@ The file `vercel.json` is used to rewrite all routes to `index.html`, which enab
 cd Frontend
 npm install
 ```
-### packages
 
-## packages
+### Packages
 
-Package	                    Command
-React	                    npm install react
-React DOM	                npm install react-dom
-Axios	                    npm install axios
-React Hook Form	            npm install react-hook-form
-React Hot Toast	            npm install react-hot-toast
-React Router	            npm install react-router
-Zustand	                    npm install zustand
-Tailwind CSS	            npm install tailwindcss
-Tailwind CSS Vite Plugin	npm install @tailwindcss/vite
+| Package | Command |
+| --- | --- |
+| React | `npm install react` |
+| React DOM | `npm install react-dom` |
+| Axios | `npm install axios` |
+| React Hook Form | `npm install react-hook-form` |
+| React Hot Toast | `npm install react-hot-toast` |
+| React Router | `npm install react-router` |
+| Zustand | `npm install zustand` |
+| Tailwind CSS | `npm install tailwindcss` |
+| Tailwind CSS Vite Plugin | `npm install @tailwindcss/vite` |
+
 ### Run locally
 
 ```bash
